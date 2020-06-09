@@ -1,16 +1,19 @@
 package main
 
 import (
-	"gopetstore/src/controller"
+	"gopetstore/src/route"
 	"net/http"
 )
 
+const port = ":8080"
+
 func main() {
-	http.Handle("/font/", http.StripPrefix("/font/", http.FileServer(http.Dir("./font"))))
-	http.HandleFunc("/showlogin", controller.ShowLogin)
-	http.HandleFunc("/login", controller.LoginServlet)
-	http.HandleFunc("/hello", controller.Hello)
-	err := http.ListenAndServe(":8080", nil)
+	// 静态文件服务器
+	http.Handle("/", http.FileServer(http.Dir("front")))
+	// 注册路由
+	route.RegisterRoute()
+	// 监听端口
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		panic(err)
 	}
