@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"gopetstore/src/domain"
+	"gopetstore/src/util"
 	"log"
 )
 
@@ -27,7 +28,7 @@ func scanItem(r *sql.Rows, hasQuantity bool) (*domain.Item, error) {
 	var listPrice, unitCost float32
 	var supplierId, quantity int
 	var attributeList [5]string
-	var pName, pDescription, pCategoryId string
+	var pName, pCategoryId, pDescription string
 	var err error
 	if hasQuantity {
 		err = r.Scan(&itemId, &listPrice, &unitCost, &supplierId, &productId,
@@ -56,7 +57,7 @@ func scanItem(r *sql.Rows, hasQuantity bool) (*domain.Item, error) {
 		SupplierId:    supplierId,
 		Status:        status,
 		AttributeList: attributeList,
-		Product:       p,
+		Product:       &p,
 		Quantity:      quantity,
 	}
 	return &i, nil
@@ -64,7 +65,7 @@ func scanItem(r *sql.Rows, hasQuantity bool) (*domain.Item, error) {
 
 // get item by item id
 func GetItem(itemId string) (*domain.Item, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -89,7 +90,7 @@ func GetItem(itemId string) (*domain.Item, error) {
 
 // get all items by product id
 func GetItemListByProduct(productId string) ([]domain.Item, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -116,7 +117,7 @@ func GetItemListByProduct(productId string) ([]domain.Item, error) {
 
 // get inventory by item id
 func GetInventoryQuantity(itemId string) (int, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -142,7 +143,7 @@ func GetInventoryQuantity(itemId string) (int, error) {
 
 // update inventory by item id
 func UpdateInventoryQuantity(itemId string, increment int) error {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()

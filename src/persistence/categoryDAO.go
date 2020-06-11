@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"gopetstore/src/domain"
+	"gopetstore/src/util"
 	"log"
 )
 
@@ -26,7 +27,7 @@ func scanCategory(r *sql.Rows) (*domain.Category, error) {
 
 // 获取所有的 category
 func GetCategoryList() ([]domain.Category, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -53,7 +54,7 @@ func GetCategoryList() ([]domain.Category, error) {
 
 // 通过 id 获取指定的 category
 func GetCategory(categoryId string) (*domain.Category, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()

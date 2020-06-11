@@ -1,0 +1,84 @@
+{{define "accountField"}}
+    <h3>Account Information</h3>
+
+    <table>
+        <tr>
+            <td>First name:</td>
+            <td>
+                <input type="text" name="firstName" value="{{.Account.FirstName}}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Last name:</td>
+            <td>
+                <input type="text" name="lastName" value="{{.Account.LastName}}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td><input type="text" size="40" name="email" value="{{.Account.Email}}"/></td>
+        </tr>
+        <tr>
+            <td>Phone:</td>
+            <td><input type="text" name="phone" value="{{.Account.Phone}}"/></td>
+        </tr>
+        <tr>
+            <td>Address 1:</td>
+            <td><input type="text" size="40" name="address1" value="{{.Account.Address1}}"/></td>
+        </tr>
+        <tr>
+            <td>Address 2:</td>
+            <td><input type="text" size="40" name="address2" value="{{.Account.Address2}}"/></td>
+        </tr>
+        <tr>
+            <td>City:</td>
+            <td><input type="text" name="city" value="{{.Account.City}}"/></td>
+        </tr>
+        <tr>
+            <td>State:</td>
+            <td><input type="text" size="4" name="state" value="{{.Account.State}}"/></td>
+        </tr>
+        <tr>
+            <td>Zip:</td>
+            <td><input type="text" size="10" name="zip" value="{{.Account.Zip}}"/></td>
+        </tr>
+        <tr>
+            <td>Country:</td>
+            <td><input type="text" size="15" name="country" value="{{.Account.Country}}"/></td>
+        </tr>
+    </table>
+
+    <h3>Profile Information</h3>
+
+    <table>
+        <tr>
+            <td>Language Preference:</td>
+            <td>
+                <select name="languagePreference" id="languagePreference">
+                    {{range .Languages}}
+                        <option>{{.}}</option>
+                    {{end}}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Favourite Category:</td>
+            <td>
+                <select name="favouriteCategoryId" id="favouriteCategoryId">
+                    {{range .Categories}}
+                        <option>{{.}}</option>
+                    {{end}}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Enable MyList</td>
+            <td><input type="checkbox" name="listOption" value="listOption"/></td>
+        </tr>
+        <tr>
+            <td>Enable MyBanner</td>
+            <td><input type="checkbox" name="bannerOption" value="bannerOption"/></td>
+        </tr>
+
+    </table>
+{{end}}

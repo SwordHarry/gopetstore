@@ -6,5 +6,6 @@ const Front = "front"
 const Web = "web"
 const Catalog = "catalog"
 const COMMON = "common"
+const Cart = "cart"
 
-var Common = filepath.Join(Front, Web, COMMON, "common.html")
+var CommonPath = filepath.Join(Front, Web, COMMON, "common.html")

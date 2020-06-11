@@ -15,30 +15,37 @@ const productFile = "product.html"
 var productPath = filepath.Join(config.Front, config.Web, config.Catalog, productFile)
 
 func ViewProduct(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	productId := q["productId"][0]
+	productId := util.GetParam(r, "productId")[0]
 	p, err := service.GetProduct(productId)
 	if err != nil {
 		log.Printf("error: %v", err.Error())
-		ViewCategory(w, r)
 		return
+	}
+	// 使用 session 存储 product
+	s, err := util.GetSession(r)
+	if err != nil {
+		log.Printf("session error: %v", err.Error())
+	} else {
+		err := s.Save("product", p, w, r)
+		if err != nil {
+			log.Printf("session error: %v", err.Error())
+		}
 	}
 	items, err := service.GetItemListByProduct(productId)
 	if err != nil {
 		log.Printf("error: %v", err.Error())
-		ViewCategory(w, r)
 		return
 	}
 
-	err = util.Render(w, struct {
+	err = util.RenderWithCommon(w, struct {
 		Account  interface{}
-		Product  domain.Product
+		Product  *domain.Product
 		ItemList []domain.Item
 	}{
 		Account:  nil,
-		Product:  *p,
+		Product:  p,
 		ItemList: items,
-	}, productPath, config.Common)
+	}, productPath)
 	if err != nil {
 		log.Printf("error: %v", err.Error())
 	}

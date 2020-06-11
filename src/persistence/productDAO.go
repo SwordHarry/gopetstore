@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"gopetstore/src/domain"
+	"gopetstore/src/util"
 	"log"
 )
 
@@ -13,7 +14,7 @@ const getProductListByKeyword = "select PRODUCTID,NAME,DESCN as description,CATE
 
 // 代码封装：通用 scan product 逻辑
 func scanProduct(r *sql.Rows) (*domain.Product, error) {
-	var productId, name, description, categoryId string
+	var productId, name, categoryId, description string
 	err := r.Scan(&productId, &name, &description, &categoryId)
 	if err != nil {
 		return nil, err
@@ -28,7 +29,7 @@ func scanProduct(r *sql.Rows) (*domain.Product, error) {
 
 // 通过 category 的 id 获取之下的 product
 func GetProductListByCategory(categoryId string) ([]domain.Product, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -55,7 +56,7 @@ func GetProductListByCategory(categoryId string) ([]domain.Product, error) {
 
 // 通过 id 获取 product
 func GetProduct(productId string) (*domain.Product, error) {
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
@@ -83,7 +84,7 @@ func GetProduct(productId string) (*domain.Product, error) {
 // 通过关键字获取 product
 func SearchProductList(keyword string) ([]domain.Product, error) {
 	var result []domain.Product
-	d, err := getConnection()
+	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()

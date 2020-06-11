@@ -1,9 +1,11 @@
-package persistence
+package util
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestDBUtil(t *testing.T) {
-	d, err := getConnection()
+	d, err := GetConnection()
 	defer d.Close()
 	if err != nil {
 		t.Errorf("数据库链接错误: %v", err.Error())

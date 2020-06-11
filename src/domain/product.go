@@ -1,5 +1,9 @@
 package domain
 
+import (
+	"encoding/gob"
+)
+
 type Product struct {
 	ProductId   string
 	CategoryId  string
@@ -11,11 +15,7 @@ func (p *Product) String() string {
 	return p.ProductId
 }
 
-func NewProduct(productId, categoryId, name, description string) Product {
-	return Product{
-		ProductId:   productId,
-		CategoryId:  categoryId,
-		Name:        name,
-		Description: description,
-	}
+// 序列化注册 product，用于 session 存储
+func init() {
+	gob.Register(&Product{})
 }
