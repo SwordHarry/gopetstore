@@ -22,9 +22,3 @@ func RenderWithCommon(w http.ResponseWriter, data interface{}, fileName string) 
 func UnEscape(s string) template.HTML {
 	return template.HTML(s)
 }
-
-// about request
-// 获取 url 中的 参数
-func GetParam(r *http.Request, key string) []string {
-	return r.URL.Query()[key]
-}

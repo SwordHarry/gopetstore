@@ -143,22 +143,6 @@ func GetInventoryQuantity(itemId string) (int, error) {
 
 // update inventory by item id
 func UpdateInventoryQuantity(itemId string, increment int) error {
-	d, err := util.GetConnection()
-	defer func() {
-		if d != nil {
-			_ = d.Close()
-		}
-	}()
-	if err != nil {
-		return err
-	}
-	r, err := d.Exec(updateInventoryByItemIdSQl, increment, itemId)
-	if err != nil {
-		return err
-	}
-	rowNum, err := r.RowsAffected()
-	if rowNum > 0 && err == nil {
-		return nil
-	}
-	return err
+	return util.InsertOrUpdate(updateInventoryByItemIdSQl,
+		"can not update inventory by this item id", increment, itemId)
 }

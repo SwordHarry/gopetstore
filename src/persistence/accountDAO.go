@@ -36,8 +36,8 @@ const updateProfileSQL = `UPDATE PROFILE SET LANGPREF = ?, FAVCATEGORY = ?,mylis
 // insert profile from profile
 const insertProfileSQL = `INSERT INTO PROFILE (LANGPREF, FAVCATEGORY, USERID, mylistopt, banneropt) VALUES (?, ?, ?, ?, ?)`
 
-// update userName and password from signOn
-const updateSigOnSQL = `UPDATE SIGNON SET USERNAME = ? WHERE PASSWORD = ?`
+// update password by userName from signOn
+const updateSigOnSQL = `UPDATE SIGNON SET PASSWORD = ? WHERE USERNAME = ?`
 
 // insert username and password from signOn
 const insertSigOnSQL = `INSERT INTO SIGNON (USERNAME,PASSWORD) VALUES (?, ?)`
@@ -97,7 +97,7 @@ func GetAccountByUserName(userName string) (*domain.Account, error) {
 	return nil, errors.New("can not find the account by this user name")
 }
 
-// get account by user name and password for sigIn
+// get account by user name and password for signIn
 func GetAccountByUserNameAndPassword(userName string, password string) (*domain.Account, error) {
 	d, err := util.GetConnection()
 	defer func() {
@@ -121,6 +121,41 @@ func GetAccountByUserNameAndPassword(userName string, password string) (*domain.
 	}
 	return nil, errors.New("can not find the account by this user name and password")
 }
-func UpdateAccount() {
 
+// update account by userName
+func UpdateAccountByUserName(account *domain.Account, userName string) error {
+	return util.InsertOrUpdate(updateAccountSQL, "none account was updated by this userName",
+		account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
+		account.City, account.State, account.Zip, account.Country, account.Phone, userName)
+}
+
+// insert account
+func InsertAccount(account *domain.Account) error {
+	return util.InsertOrUpdate(insertAccountSQL,
+		"insert account error", account.Email, account.FirstName, account.LastName,
+		account.Status, account.Address1, account.Address2, account.City, account.State,
+		account.Zip, account.Country, account.Phone, account.UserName)
+}
+
+// update profile by userName
+func UpdateProfileByUserName(account *domain.Account, userName string) error {
+	return util.InsertOrUpdate(updateProfileSQL,
+		"can not update profile by this user name", account.LanguagePreference, account.FavouriteCategoryId,
+		account.ListOption, account.BannerOption, userName)
+}
+
+// insert profile from profile
+func InsertProfile(account *domain.Account) error {
+	return util.InsertOrUpdate(insertProfileSQL, "can not insert profile", account.LanguagePreference,
+		account.FavouriteCategoryId, account.UserName, account.ListOption, account.BannerOption)
+}
+
+// update userName and password from signOn
+func UpdateSignOn(userName string, password string) error {
+	return util.InsertOrUpdate(updateSigOnSQL, "can not update password by this user name", password, userName)
+}
+
+// insert user name and password from signOn
+func InsertSigOn(userName string, password string) error {
+	return util.InsertOrUpdate(insertSigOnSQL, "can not insert this user name and password", userName, password)
 }

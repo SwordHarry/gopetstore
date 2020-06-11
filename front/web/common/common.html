@@ -27,9 +27,7 @@
                 <img align="middle" name="img_cart" src="images/cart.gif"/>
             </a>
             <img align="middle" src="images/separator.gif"/>
-            {{if eq .Account nil}}
-                <a href="login">Sign In</a>
-            {{else}}
+            {{if .Account}}
                 <a href="signOut">
                     Sign Out
                 </a>
@@ -37,6 +35,8 @@
                 <a href="editAccount">
                     My Account
                 </a>
+            {{else}}
+                <a href="login">Sign In</a>
             {{end}}
             <img align="middle" src="images/separator.gif"/> <a href="viewHelp">?</a>
         </div>

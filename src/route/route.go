@@ -11,15 +11,18 @@ import (
 
 // 路由映射注册表
 var route = map[string]func(w http.ResponseWriter, r *http.Request){
-	// 页面跳转
+	// view
 	"/main":         controller.ViewMain,
 	"/viewCategory": controller.ViewCategory,
 	"/viewProduct":  controller.ViewProduct,
 	"/viewItem":     controller.ViewItem,
-	// 购物车
+	// cart
 	"/addItemToCart":      controller.AddItemToCart,
 	"/viewCart":           controller.ViewCart,
 	"/removeItemFromCart": controller.RemoveItemFromCart,
+	// account
+	"/login":    controller.ViewLoginOrPostLogin,
+	"/register": controller.ViewRegister,
 }
 
 // 注册路由

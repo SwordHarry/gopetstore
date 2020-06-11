@@ -5,46 +5,46 @@
         <tr>
             <td>First name:</td>
             <td>
-                <input type="text" name="firstName" value="{{.Account.FirstName}}"/>
+                <input type="text" name="firstName" value="{{if .Account}}{{.Account.FirstName}}{{end}}"/>
             </td>
         </tr>
         <tr>
             <td>Last name:</td>
             <td>
-                <input type="text" name="lastName" value="{{.Account.LastName}}"/>
+                <input type="text" name="lastName" value="{{if .Account}}{{.Account.LastName}}{{end}}"/>
             </td>
         </tr>
         <tr>
             <td>Email:</td>
-            <td><input type="text" size="40" name="email" value="{{.Account.Email}}"/></td>
+            <td><input type="text" size="40" name="email" value="{{if .Account}}{{.Account.Email}}{{end}}"/></td>
         </tr>
         <tr>
             <td>Phone:</td>
-            <td><input type="text" name="phone" value="{{.Account.Phone}}"/></td>
+            <td><input type="text" name="phone" value="{{if .Account}}{{.Account.Phone}}{{end}}"/></td>
         </tr>
         <tr>
             <td>Address 1:</td>
-            <td><input type="text" size="40" name="address1" value="{{.Account.Address1}}"/></td>
+            <td><input type="text" size="40" name="address1" value="{{if .Account}}{{.Account.Address1}}{{end}}"/></td>
         </tr>
         <tr>
             <td>Address 2:</td>
-            <td><input type="text" size="40" name="address2" value="{{.Account.Address2}}"/></td>
+            <td><input type="text" size="40" name="address2" value="{{if .Account}}{{.Account.Address2}}{{end}}"/></td>
         </tr>
         <tr>
             <td>City:</td>
-            <td><input type="text" name="city" value="{{.Account.City}}"/></td>
+            <td><input type="text" name="city" value="{{if .Account}}{{.Account.City}}{{end}}"/></td>
         </tr>
         <tr>
             <td>State:</td>
-            <td><input type="text" size="4" name="state" value="{{.Account.State}}"/></td>
+            <td><input type="text" size="4" name="state" value="{{if .Account}}{{.Account.State}}{{end}}"/></td>
         </tr>
         <tr>
             <td>Zip:</td>
-            <td><input type="text" size="10" name="zip" value="{{.Account.Zip}}"/></td>
+            <td><input type="text" size="10" name="zip" value="{{if .Account}}{{.Account.Zip}}{{end}}"/></td>
         </tr>
         <tr>
             <td>Country:</td>
-            <td><input type="text" size="15" name="country" value="{{.Account.Country}}"/></td>
+            <td><input type="text" size="15" name="country" value="{{if .Account}}{{.Account.Country}}{{end}}"/></td>
         </tr>
     </table>
 
