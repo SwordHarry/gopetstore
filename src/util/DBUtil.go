@@ -3,6 +3,7 @@ package util
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	// 驱动需要进行隐式导入
 	_ "github.com/go-sql-driver/mysql"
@@ -35,7 +36,7 @@ func InsertOrUpdate(SQL string, errStr string, param ...interface{}) error {
 	if err != nil {
 		return err
 	}
-
+	log.Print(param)
 	var r sql.Result
 	if len(param) > 0 {
 		r, err = d.Exec(SQL, param...)
@@ -52,5 +53,6 @@ func InsertOrUpdate(SQL string, errStr string, param ...interface{}) error {
 	if rowNum > 0 {
 		return nil
 	}
+	log.Print(rowNum)
 	return errors.New(errStr)
 }

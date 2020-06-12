@@ -11,6 +11,9 @@
             <input type="password" name="password">
         </p>
         <input type="submit" name="signIn" value="Login">
+        {{if .Message}}
+            <p style="color: darkred;font-size: 14px">{{.Message}}</p>
+        {{end}}
     </form>
     Need a user name and password?
     <a href="register">

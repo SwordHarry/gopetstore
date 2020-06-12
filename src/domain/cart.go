@@ -43,6 +43,7 @@ func (c *Cart) AddItem(item Item, isInStock bool) {
 			InStock:  isInStock,
 			Total:    0,
 		}
+		ci.calculateTotal()
 		c.ItemList = append(c.ItemList, ci)
 	}
 }

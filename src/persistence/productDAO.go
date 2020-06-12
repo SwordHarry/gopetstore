@@ -51,6 +51,7 @@ func GetProductListByCategory(categoryId string) ([]domain.Product, error) {
 		}
 		result = append(result, *p)
 	}
+	defer r.Close()
 	return result, nil
 }
 
@@ -77,6 +78,7 @@ func GetProduct(productId string) (*domain.Product, error) {
 
 		return p, nil
 	}
+	defer r.Close()
 	// 这里的逻辑是 r.Next() 中没有值
 	return nil, errors.New("can not find a product by this id")
 }
@@ -94,6 +96,11 @@ func SearchProductList(keyword string) ([]domain.Product, error) {
 		return result, err
 	}
 	r, err := d.Query(getProductListByKeyword, keyword)
+	defer func() {
+		if r != nil {
+			_ = r.Close()
+		}
+	}()
 	if err != nil {
 		return result, err
 	}

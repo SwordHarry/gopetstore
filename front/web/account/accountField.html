@@ -56,6 +56,8 @@
             <td>
                 <select name="languagePreference" id="languagePreference">
                     {{range .Languages}}
+                        {{if $.Account}}{{if eq ($.Account.LanguagePreference) .}}
+                            <option selected>{{.}}</option>{{end}}{{end}}
                         <option>{{.}}</option>
                     {{end}}
                 </select>
@@ -66,6 +68,8 @@
             <td>
                 <select name="favouriteCategoryId" id="favouriteCategoryId">
                     {{range .Categories}}
+                        {{if $.Account}}{{if eq ($.Account.FavouriteCategoryId) .}}
+                            <option selected>{{.}}</option>{{end}}{{end}}
                         <option>{{.}}</option>
                     {{end}}
                 </select>
@@ -73,11 +77,13 @@
         </tr>
         <tr>
             <td>Enable MyList</td>
-            <td><input type="checkbox" name="listOption" value="listOption"/></td>
+            <td><input type="checkbox" name="listOption" value="listOption"
+                       {{if .Account}}{{if .Account.ListOption}}checked{{end}}{{end}}/></td>
         </tr>
         <tr>
             <td>Enable MyBanner</td>
-            <td><input type="checkbox" name="bannerOption" value="bannerOption"/></td>
+            <td><input type="checkbox" name="bannerOption" value="bannerOption"
+                       {{if .Account}}{{if .Account.BannerOption}}checked{{end}}{{end}}/></td>
         </tr>
 
     </table>

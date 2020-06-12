@@ -23,7 +23,9 @@
 
 
         <input type="submit" value="Save Account Information">
-
+        {{if .Message}}
+            <p style="color: darkred;font-size: 14px">{{.Message}}</p>
+        {{end}}
     </form>
 </div>
 {{template "footer" .}}

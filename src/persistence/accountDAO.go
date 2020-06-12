@@ -5,6 +5,7 @@ import (
 	"errors"
 	"gopetstore/src/domain"
 	"gopetstore/src/util"
+	"log"
 )
 
 // all SQL about Account
@@ -23,8 +24,7 @@ FROM ACCOUNT, PROFILE, SIGNON, BANNERDATA WHERE ACCOUNT.USERID = ? AND SIGNON.PA
 AND SIGNON.USERNAME = ACCOUNT.USERID AND PROFILE.USERID = ACCOUNT.USERID AND PROFILE.FAVCATEGORY = BANNERDATA.FAVCATEGORY`
 
 // update account from account
-const updateAccountSQL = `UPDATE ACCOUNT SET EMAIL = ?,FIRSTNAME = ?,LASTNAME = ?,STATUS = ?,ADDR1 = ?,
-ADDR2 = ?,CITY = ?,STATE = ?,ZIP = ?,COUNTRY = ?,PHONE = ? WHERE USERID = ?`
+const updateAccountSQL = `UPDATE ACCOUNT SET EMAIL = ?,FIRSTNAME = ?,LASTNAME = ?,STATUS = ?,ADDR1 = ?,ADDR2 = ?,CITY = ?,STATE = ?,ZIP = ?,COUNTRY = ?,PHONE = ? WHERE USERID = ?`
 
 // insert account from account
 const insertAccountSQL = `INSERT INTO ACCOUNT (EMAIL, FIRSTNAME, LASTNAME, STATUS, ADDR1, ADDR2, CITY, STATE, ZIP, COUNTRY, PHONE, USERID) 
@@ -94,6 +94,7 @@ func GetAccountByUserName(userName string) (*domain.Account, error) {
 		}
 		return a, nil
 	}
+	defer r.Close()
 	return nil, errors.New("can not find the account by this user name")
 }
 
@@ -119,14 +120,41 @@ func GetAccountByUserNameAndPassword(userName string, password string) (*domain.
 		}
 		return a, nil
 	}
+	defer r.Close()
 	return nil, errors.New("can not find the account by this user name and password")
 }
 
 // update account by userName
 func UpdateAccountByUserName(account *domain.Account, userName string) error {
-	return util.InsertOrUpdate(updateAccountSQL, "none account was updated by this userName",
-		account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
+	// TODO: 更新恒报错，affectedRow 为 0
+	log.Print(account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
+		account.City, account.State, account.Zip, account.Country, account.Phone)
+	log.Printf("userName: %v", userName)
+	d, err := util.GetConnection()
+	defer func() {
+		if d != nil {
+			_ = d.Close()
+		}
+	}()
+	if err != nil {
+		return err
+	}
+	r, err := d.Exec(updateAccountSQL, account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
 		account.City, account.State, account.Zip, account.Country, account.Phone, userName)
+	if err != nil {
+		return err
+	}
+	affectedRow, err := r.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affectedRow > 0 {
+		return nil
+	}
+	return errors.New("none account was updated by this userName")
+	//return util.InsertOrUpdate(updateAccountSQL, "none account was updated by this userName",
+	//	account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
+	//	account.City, account.State, account.Zip, account.Country, account.Phone, userName)
 }
 
 // insert account

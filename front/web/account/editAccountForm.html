@@ -8,15 +8,15 @@
         <table>
             <tr>
                 <td>User ID:</td>
-                <td>{{.Account.username}}</td>
+                <td><input type="text" name="username" value="{{.Account.UserName}}" readonly/></td>
             </tr>
             <tr>
                 <td>New password:</td>
-                <td><input type="password" name="password" /></td>
+                <td><input type="password" name="password"/></td>
             </tr>
             <tr>
                 <td>Repeat password:</td>
-                <td><input type="password" name="repeatedPassword" /></td>
+                <td><input type="password" name="repeatedPassword"/></td>
                 <td><font color="red">{{.Message}}</font></td>
             </tr>
         </table>
@@ -25,6 +25,9 @@
         <input type="submit" name="editAccount" value="Save Account Information" />
 
     </form>
+    {{if .Message}}
+        <p style="color: darkred;font-size: 14px">{{.Message}}</p>
+    {{end}}
     <a href="orderList">My Orders</a>
 </div>
 {{template "footer" .}}

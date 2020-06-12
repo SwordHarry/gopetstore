@@ -1,14 +1,14 @@
 {{template "header" .}}
-    {{if eq .Account nil}}
+    {{if .Account}}
         <div id="Welcome">
-            <div id="WelcomeContent">
-                Welcome to MyPetStore!
+            <div id="WelcomeContentForAccount">
+                Welcome {{.Account.UserName}}!
             </div>
         </div>
     {{else}}
         <div id="Welcome">
-            <div id="WelcomeContentForAccount">
-                Welcome {{.account.username}}!
+            <div id="WelcomeContent">
+                Welcome to MyPetStore!
             </div>
         </div>
     {{end}}
