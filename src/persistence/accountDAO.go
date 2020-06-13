@@ -9,6 +9,7 @@ import (
 )
 
 // all SQL about Account
+// Query
 // get account by userName from signOn, account, bannerData
 const getAccountByUsernameSQL = `SELECT SIGNON.USERNAME,ACCOUNT.EMAIL,ACCOUNT.FIRSTNAME,ACCOUNT.LASTNAME,ACCOUNT.STATUS,ACCOUNT.ADDR1 AS address1,
 ACCOUNT.ADDR2 AS address2,ACCOUNT.CITY,ACCOUNT.STATE,ACCOUNT.ZIP,ACCOUNT.COUNTRY,ACCOUNT.PHONE,PROFILE.LANGPREF AS languagePreference,
@@ -23,24 +24,26 @@ PROFILE.FAVCATEGORY AS favouriteCategoryId,PROFILE.MYLISTOPT AS listOption,PROFI
 FROM ACCOUNT, PROFILE, SIGNON, BANNERDATA WHERE ACCOUNT.USERID = ? AND SIGNON.PASSWORD = ? 
 AND SIGNON.USERNAME = ACCOUNT.USERID AND PROFILE.USERID = ACCOUNT.USERID AND PROFILE.FAVCATEGORY = BANNERDATA.FAVCATEGORY`
 
-// update account from account
-const updateAccountSQL = `UPDATE ACCOUNT SET EMAIL = ?,FIRSTNAME = ?,LASTNAME = ?,STATUS = ?,ADDR1 = ?,ADDR2 = ?,CITY = ?,STATE = ?,ZIP = ?,COUNTRY = ?,PHONE = ? WHERE USERID = ?`
-
+// Insert
 // insert account from account
 const insertAccountSQL = `INSERT INTO ACCOUNT (EMAIL, FIRSTNAME, LASTNAME, STATUS, ADDR1, ADDR2, CITY, STATE, ZIP, COUNTRY, PHONE, USERID) 
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
-// update profile from profile
-const updateProfileSQL = `UPDATE PROFILE SET LANGPREF = ?, FAVCATEGORY = ?,mylistopt = ?,banneropt = ? WHERE USERID = ?`
-
 // insert profile from profile
 const insertProfileSQL = `INSERT INTO PROFILE (LANGPREF, FAVCATEGORY, USERID, mylistopt, banneropt) VALUES (?, ?, ?, ?, ?)`
 
-// update password by userName from signOn
-const updateSigOnSQL = `UPDATE SIGNON SET PASSWORD = ? WHERE USERNAME = ?`
-
 // insert username and password from signOn
 const insertSigOnSQL = `INSERT INTO SIGNON (USERNAME,PASSWORD) VALUES (?, ?)`
+
+// Update
+// update account from account
+const updateAccountSQL = `UPDATE ACCOUNT SET EMAIL = ?,FIRSTNAME = ?,LASTNAME = ?,STATUS = ?,ADDR1 = ?,ADDR2 = ?,CITY = ?,STATE = ?,ZIP = ?,COUNTRY = ?,PHONE = ? WHERE USERID = ?`
+
+// update profile from profile
+const updateProfileSQL = `UPDATE PROFILE SET LANGPREF = ?, FAVCATEGORY = ?,mylistopt = ?,banneropt = ? WHERE USERID = ?`
+
+// update password by userName from signOn
+const updateSigOnSQL = `UPDATE SIGNON SET PASSWORD = ? WHERE USERNAME = ?`
 
 func scanAccountWithSignOnAndBannerData(r *sql.Rows) (*domain.Account, error) {
 	var userName, email, firstName, lastName, status, addr1, addr2, city, state, zip, country, phone string
@@ -124,6 +127,25 @@ func GetAccountByUserNameAndPassword(userName string, password string) (*domain.
 	return nil, errors.New("can not find the account by this user name and password")
 }
 
+// insert account
+func InsertAccount(account *domain.Account) error {
+	return util.InsertOrUpdate(insertAccountSQL,
+		"insert account error", account.Email, account.FirstName, account.LastName,
+		account.Status, account.Address1, account.Address2, account.City, account.State,
+		account.Zip, account.Country, account.Phone, account.UserName)
+}
+
+// insert profile from profile
+func InsertProfile(account *domain.Account) error {
+	return util.InsertOrUpdate(insertProfileSQL, "can not insert profile", account.LanguagePreference,
+		account.FavouriteCategoryId, account.UserName, account.ListOption, account.BannerOption)
+}
+
+// insert user name and password from signOn
+func InsertSigOn(userName string, password string) error {
+	return util.InsertOrUpdate(insertSigOnSQL, "can not insert this user name and password", userName, password)
+}
+
 // update account by userName
 func UpdateAccountByUserName(account *domain.Account, userName string) error {
 	// TODO: 更新恒报错，affectedRow 为 0
@@ -157,14 +179,6 @@ func UpdateAccountByUserName(account *domain.Account, userName string) error {
 	//	account.City, account.State, account.Zip, account.Country, account.Phone, userName)
 }
 
-// insert account
-func InsertAccount(account *domain.Account) error {
-	return util.InsertOrUpdate(insertAccountSQL,
-		"insert account error", account.Email, account.FirstName, account.LastName,
-		account.Status, account.Address1, account.Address2, account.City, account.State,
-		account.Zip, account.Country, account.Phone, account.UserName)
-}
-
 // update profile by userName
 func UpdateProfileByUserName(account *domain.Account, userName string) error {
 	return util.InsertOrUpdate(updateProfileSQL,
@@ -172,18 +186,7 @@ func UpdateProfileByUserName(account *domain.Account, userName string) error {
 		account.ListOption, account.BannerOption, userName)
 }
 
-// insert profile from profile
-func InsertProfile(account *domain.Account) error {
-	return util.InsertOrUpdate(insertProfileSQL, "can not insert profile", account.LanguagePreference,
-		account.FavouriteCategoryId, account.UserName, account.ListOption, account.BannerOption)
-}
-
 // update userName and password from signOn
 func UpdateSignOn(userName string, password string) error {
 	return util.InsertOrUpdate(updateSigOnSQL, "can not update password by this user name", password, userName)
-}
-
-// insert user name and password from signOn
-func InsertSigOn(userName string, password string) error {
-	return util.InsertOrUpdate(insertSigOnSQL, "can not insert this user name and password", userName, password)
 }

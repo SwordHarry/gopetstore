@@ -19,12 +19,14 @@ type session struct {
 const secretKey = "go-pet-store"
 
 // go web 标准库没有 session，需要自己开发封装或使用第三方的库
-var sessionStore = sessions.NewCookieStore([]byte(secretKey))
+var sessionStore = sessions.NewFilesystemStore("", []byte(secretKey))
 
 const sessionName = "session"
 
 // 初始化，通过这个获取唯一 session
 func GetSession(r *http.Request) (*session, error) {
+	// 设置 fileSystemStore 的最大存储长度，防止溢出
+	sessionStore.MaxLength(5 * 4096)
 	s, err := sessionStore.Get(r, sessionName)
 	if err != nil {
 		return nil, err
@@ -99,7 +101,7 @@ func GetCartFromSession(w http.ResponseWriter, r *http.Request, callback func(ca
 		// 将新的购物车进行存储覆盖
 		err := s.Save("cart", c, w, r)
 		if err != nil {
-			log.Printf("session error for Save: %v", err.Error())
+			log.Printf("GetCartFromSession session error for Save: %v", err.Error())
 		}
 	}
 	return cart

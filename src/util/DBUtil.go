@@ -16,10 +16,11 @@ const driverName = "mysql"
 const charset = "charset=utf8"
 const local = "loc=Local"
 const tcpPort = "@tcp(localhost:3306)/"
+const parseTime = "parseTime=true"
 
 // 连接数据库 mysql
 func GetConnection() (*sql.DB, error) {
-	dataSourceName := userName + ":" + password + tcpPort + dbName + "?" + charset + "&" + local
+	dataSourceName := userName + ":" + password + tcpPort + dbName + "?" + charset + "&" + local + "&" + parseTime
 	db, err := sql.Open(driverName, dataSourceName) //对应数据库的用户名和密码以及数据库名
 
 	return db, err

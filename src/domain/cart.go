@@ -35,7 +35,7 @@ func (c *Cart) ContainItem(itemId string) (*CartItem, bool) {
 // 往购物车添加商品
 func (c *Cart) AddItem(item Item, isInStock bool) {
 	if ci, ok := c.ContainItem(item.ItemId); ok {
-		ci.incrementQuantity()
+		ci.IncrementQuantity()
 	} else {
 		ci := &CartItem{
 			Item:     &item,
@@ -43,7 +43,7 @@ func (c *Cart) AddItem(item Item, isInStock bool) {
 			InStock:  isInStock,
 			Total:    0,
 		}
-		ci.calculateTotal()
+		ci.CalculateTotal()
 		c.ItemList = append(c.ItemList, ci)
 	}
 }
@@ -69,7 +69,7 @@ func (c *Cart) GetNumberOfItems() int {
 func (c *Cart) IncrementQuantityByItemId(itemId string) {
 	ci, ok := c.ContainItem(itemId)
 	if ok {
-		ci.incrementQuantity()
+		ci.IncrementQuantity()
 	}
 }
 
@@ -77,13 +77,13 @@ func (c *Cart) IncrementQuantityByItemId(itemId string) {
 func (c *Cart) SetQuantityByItemId(itemId string, quantity int) {
 	ci, _ := c.ContainItem(itemId)
 	ci.Quantity = quantity
-	ci.calculateTotal()
+	ci.CalculateTotal()
 }
 
 // 获取购物车总价格
 func (c *Cart) GetSubTotal() (subTotal float32) {
 	for _, ci := range c.ItemList {
-		ci.calculateTotal()
+		ci.CalculateTotal()
 		subTotal += ci.Total
 	}
 	return

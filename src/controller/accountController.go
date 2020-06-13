@@ -98,6 +98,8 @@ func SignOut(w http.ResponseWriter, r *http.Request) {
 	}
 	if s != nil {
 		err = s.Del("account", w, r)
+		err = s.Del("cart", w, r)
+		err = s.Del("order", w, r)
 		if err != nil {
 			log.Printf("session delete error: %v", err.Error())
 		}

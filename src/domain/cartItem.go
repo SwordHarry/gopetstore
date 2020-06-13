@@ -9,13 +9,13 @@ type CartItem struct {
 }
 
 // 数量增加
-func (ci *CartItem) incrementQuantity() {
+func (ci *CartItem) IncrementQuantity() {
 	ci.Quantity++
-	ci.calculateTotal()
+	ci.CalculateTotal()
 }
 
 // 计算总价: 单价 * 数量
-func (ci *CartItem) calculateTotal() {
+func (ci *CartItem) CalculateTotal() {
 	if ci.Item != nil && ci.Item.ListPrice != 0 {
 		ci.Total = ci.Item.ListPrice * float32(ci.Quantity)
 	}

@@ -28,6 +28,13 @@ var route = map[string]http.HandlerFunc{
 	"/editAccount": controller.ViewEditAccount,
 	"/newAccount":  controller.NewAccount,
 	"/confirmEdit": controller.ConfirmEdit,
+	// order
+	"/viewOrderForm": controller.ViewInitOrder,
+	"/confirmOrder":  controller.ConfirmOrderStep1,
+	"/confirmShip":   controller.ConfirmShip,
+	"/finalOrder":    controller.ConfirmOrderStep2,
+	"/orderList":     controller.ListOrders,
+	"/checkOrder":    controller.CheckOrder,
 }
 
 // 注册路由
