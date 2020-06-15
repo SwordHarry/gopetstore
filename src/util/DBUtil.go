@@ -4,19 +4,20 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-
 	// 驱动需要进行隐式导入
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const userName = "root"
-const password = "root"
-const dbName = "gopetstore"
-const driverName = "mysql"
-const charset = "charset=utf8"
-const local = "loc=Local"
-const tcpPort = "@tcp(localhost:3306)/"
-const parseTime = "parseTime=true"
+const (
+	userName   = "root"
+	password   = "root"
+	dbName     = "gopetstore"
+	driverName = "mysql"
+	charset    = "charset=utf8"
+	local      = "loc=Local"
+	tcpPort    = "@tcp(localhost:3306)/"
+	parseTime  = "parseTime=true" // 用以解析 数据库 中的 date 类型，否则会解析成 []uint8 不能隐式转为 string
+)
 
 // 连接数据库 mysql
 func GetConnection() (*sql.DB, error) {

@@ -26,14 +26,14 @@ func scanCategory(r *sql.Rows) (*domain.Category, error) {
 }
 
 // 获取所有的 category
-func GetCategoryList() ([]domain.Category, error) {
+func GetCategoryList() ([]*domain.Category, error) {
 	d, err := util.GetConnection()
 	defer func() {
 		if d != nil {
 			_ = d.Close()
 		}
 	}()
-	var result []domain.Category
+	var result []*domain.Category
 	if err != nil {
 		return result, err
 	}
@@ -47,7 +47,7 @@ func GetCategoryList() ([]domain.Category, error) {
 			log.Printf("error: %v", err.Error())
 			continue
 		}
-		result = append(result, *c)
+		result = append(result, c)
 	}
 	defer r.Close()
 	return result, nil

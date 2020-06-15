@@ -17,7 +17,7 @@ func GetCategory(categoryId string) (*domain.Category, error) {
 }
 
 // get all categories
-func GetCategoryList() ([]domain.Category, error) {
+func GetCategoryList() ([]*domain.Category, error) {
 	return persistence.GetCategoryList()
 }
 
