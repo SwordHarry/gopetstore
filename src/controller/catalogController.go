@@ -5,7 +5,6 @@ import (
 	"gopetstore/src/domain"
 	"gopetstore/src/service"
 	"gopetstore/src/util"
-	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -59,41 +58,6 @@ func ViewCategory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// 跳转 商品 详情页
-func ViewItem(w http.ResponseWriter, r *http.Request) {
-	// 从 参数中获取 itemid
-	itemId := util.GetParam(r, "itemId")[0]
-	i, err := service.GetItem(itemId)
-	if err != nil {
-		log.Printf("error: %v", err.Error())
-		return
-	}
-	// 从 session 中获取 product
-	s, err := util.GetSession(r)
-	var p *domain.Product
-	if err != nil {
-		log.Printf("session error: %v", err.Error())
-	} else {
-		r, ok := s.Get("product")
-		if ok {
-			p = r.(*domain.Product)
-		}
-	}
-	// render
-	m := make(map[string]interface{})
-	m["Item"] = i
-	m["Product"] = p
-	var descriptionHtml template.HTML
-	if p != nil {
-		descriptionHtml = util.UnEscape(p.Description)
-	}
-	m["DescHTML"] = descriptionHtml
-	err = util.RenderWithAccountAndCommonTem(w, r, m, itemPath)
-	if err != nil {
-		log.Printf("error: %v", err.Error())
-	}
-}
-
 // 跳转 product 商品页
 func ViewProduct(w http.ResponseWriter, r *http.Request) {
 	productId := util.GetParam(r, "productId")[0]
@@ -123,6 +87,36 @@ func ViewProduct(w http.ResponseWriter, r *http.Request) {
 	m["Product"] = p
 	m["ItemList"] = items
 	err = util.RenderWithAccountAndCommonTem(w, r, m, productPath)
+	if err != nil {
+		log.Printf("error: %v", err.Error())
+	}
+}
+
+// 跳转 商品 详情页
+func ViewItem(w http.ResponseWriter, r *http.Request) {
+	// 从 参数中获取 itemid
+	itemId := util.GetParam(r, "itemId")[0]
+	i, err := service.GetItem(itemId)
+	if err != nil {
+		log.Printf("error: %v", err.Error())
+		return
+	}
+	// 从 session 中获取 product
+	s, err := util.GetSession(r)
+	var p *domain.Product
+	if err != nil {
+		log.Printf("session error: %v", err.Error())
+	} else {
+		r, ok := s.Get("product")
+		if ok {
+			p = r.(*domain.Product)
+		}
+	}
+	// render
+	m := make(map[string]interface{})
+	m["Item"] = i
+	m["Product"] = p
+	err = util.RenderWithAccountAndCommonTem(w, r, m, itemPath)
 	if err != nil {
 		log.Printf("error: %v", err.Error())
 	}

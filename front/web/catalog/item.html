@@ -6,7 +6,7 @@
 <div id="Catalog">
     <table>
         <tr>
-            <td>{{.DescHTML}}</td>
+            <td>{{.Product.Description | unEscape}}</td>
         </tr>
         <tr>
             <td><b> {{.Item.ItemId}} </b></td>
