@@ -14,7 +14,6 @@
     - cart
 - 用户模块
     - account
-        - TODO: update bug
 - 订单模块
     - order
     - lineItem
