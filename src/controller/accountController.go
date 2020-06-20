@@ -121,12 +121,21 @@ func ViewEditAccount(w http.ResponseWriter, r *http.Request) {
 
 // 注册用户
 func NewAccount(w http.ResponseWriter, r *http.Request) {
-
 	a := getAccountFromInfoForm(r)
 	repeatedPassword := r.FormValue("repeatedPassword")
 	m := make(map[string]interface{})
 	m["Languages"] = languages
 	m["Categories"] = categories
+	if len(a.Password) == 0 {
+		m["Account"] = a
+		m["Message"] = "密码不能为空"
+		// 返回到注册页面
+		err := util.Render(w, m, registerFormPath, config.CommonPath, accountFieldPath)
+		if err != nil {
+			log.Printf("NewAccount RenderWithAccount error: %v", err.Error())
+		}
+		return
+	}
 	if repeatedPassword != a.Password {
 		m["Account"] = a
 		m["Message"] = "密码和重复密码不符"
@@ -167,9 +176,16 @@ func ConfirmEdit(w http.ResponseWriter, r *http.Request) {
 	a := getAccountFromInfoForm(r)
 	repeatedPassword := r.FormValue("repeatedPassword")
 	m := make(map[string]interface{})
-	m["Account"] = a
 	m["Languages"] = languages
 	m["Categories"] = categories
+	if len(a.Password) == 0 {
+		m["Message"] = "密码不能为空"
+		err := util.RenderWithAccount(w, r, m, editAccountFormPath, config.CommonPath, accountFieldPath)
+		if err != nil {
+			log.Printf("ConfirmEdit RenderWithAccount error: %v", err.Error())
+		}
+		return
+	}
 	if repeatedPassword != a.Password {
 		m["Message"] = "密码和重复密码不符"
 		// 返回到修改信息页面
@@ -195,7 +211,17 @@ func ConfirmEdit(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ConfirmEdit GetAccountByUserName error: %v", err.Error())
 	}
 	m["Message"] = "修改成功"
-	m["Account"] = newAccount
+	// 修改成功后需要重置 session
+	s, err := util.GetSession(r)
+	if err != nil {
+		log.Printf("ConfirmEdit GetSession error: %v", err.Error())
+	}
+	if s != nil {
+		err = s.Save("account", newAccount, w, r)
+		if err != nil {
+			log.Printf("ConfirmEdit Save error: %v", err.Error())
+		}
+	}
 	// 返回到修改信息页面
 	err = util.RenderWithAccount(w, r, m, editAccountFormPath, config.CommonPath, accountFieldPath)
 	if err != nil {

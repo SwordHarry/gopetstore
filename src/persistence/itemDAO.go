@@ -86,6 +86,10 @@ func GetItem(itemId string) (*domain.Item, error) {
 		return i, nil
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not find the item by this id")
 }
 
@@ -114,6 +118,10 @@ func GetItemListByProduct(productId string) ([]domain.Item, error) {
 		result = append(result, *p)
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return result, err
+	}
 	return result, nil
 }
 
@@ -141,11 +149,9 @@ func GetInventoryQuantity(itemId string) (int, error) {
 		return result, nil
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return -1, err
+	}
 	return -1, errors.New("can not find the inventory by this id")
-}
-
-// update inventory by item id
-func UpdateInventoryQuantity(itemId string, increment int) error {
-	return util.InsertOrUpdate(updateInventoryByItemIdSQl,
-		"can not update inventory by this item id", increment, itemId)
 }

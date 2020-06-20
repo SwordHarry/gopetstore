@@ -50,6 +50,10 @@ func GetCategoryList() ([]*domain.Category, error) {
 		result = append(result, c)
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return result, err
+	}
 	return result, nil
 }
 
@@ -76,5 +80,9 @@ func GetCategory(categoryId string) (*domain.Category, error) {
 		return c, nil
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not find a category by this id")
 }

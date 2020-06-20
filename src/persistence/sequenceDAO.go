@@ -35,6 +35,10 @@ func GetSequence(name string) (*domain.Sequence, error) {
 			NextId: nextId,
 		}, nil
 	}
+	defer r.Close()
+	if err = r.Err(); err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not find sequence by this name ")
 }
 

@@ -94,7 +94,11 @@ func GetOrderByOrderId(orderId int) (*domain.Order, error) {
 		order.OrderId = orderId
 		return order, nil
 	}
-
+	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not get a order by this orderId")
 }
 
@@ -127,53 +131,51 @@ func GetOrdersByUserName(userName string) ([]*domain.Order, error) {
 		}
 		result = append(result, order)
 	}
+	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return result, err
+	}
 	return result, nil
 }
 
 // insert order
 func InsertOrder(o *domain.Order) error {
-	d, err := util.GetConnection()
-	defer func() {
-		if d != nil {
-			_ = d.Close()
+	// 这里的插入使用事务，插入订单出错则回滚报错
+	return util.ExecTransaction(func(tx *sql.Tx) error {
+		for _, li := range o.LineItems {
+			// update inventory by item id
+			_, err := tx.Exec(updateInventoryByItemIdSQl, li.ItemId, li.Quantity)
+			if err != nil {
+				log.Printf("service InsertOrder UpdateInventoryQuantity error: %v", err.Error())
+				continue
+			}
 		}
-	}()
-	if err != nil {
-		return err
-	}
-	r, err := d.Exec(insertOrderSQL, o.OrderId, o.UserName, o.OrderDate, o.ShipAddress1, o.ShipAddress2, o.ShipCity,
-		o.ShipState, o.ShipZip, o.ShipCountry, o.BillAddress1, o.BillAddress2, o.BillCity, o.BillState, o.BillZip,
-		o.BillCountry, o.Courier, o.TotalPrice, o.BillToFirstName, o.BillToLastName, o.ShipToFirstName, o.ShipToLastName,
-		o.CreditCard, o.ExpiryDate, o.CardType, o.Locale)
-	if err != nil {
-		return err
-	}
-	row, err := r.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if row > 0 {
-		return nil
-	}
-	return errors.New("insert order failed")
-}
+		// insert order info
+		_, err := tx.Exec(insertOrderSQL, o.OrderId, o.UserName, o.OrderDate, o.ShipAddress1, o.ShipAddress2, o.ShipCity,
+			o.ShipState, o.ShipZip, o.ShipCountry, o.BillAddress1, o.BillAddress2, o.BillCity, o.BillState, o.BillZip,
+			o.BillCountry, o.Courier, o.TotalPrice, o.BillToFirstName, o.BillToLastName, o.ShipToFirstName, o.ShipToLastName,
+			o.CreditCard, o.ExpiryDate, o.CardType, o.Locale)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 
-// insert order status
-func InsertOrderStatus(o *domain.Order) error {
-	d, err := util.GetConnection()
-	if err != nil {
-		return err
-	}
-	r, err := d.Exec(insertOrderStatusSQL, o.OrderId, o.OrderId, o.OrderDate, o.Status)
-	if err != nil {
-		return err
-	}
-	row, err := r.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if row > 0 {
+		// insert order status
+		_, err = tx.Exec(insertOrderStatusSQL, o.OrderId, o.OrderId, o.OrderDate, o.Status)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		for _, li := range o.LineItems {
+			li.OrderId = o.OrderId
+			// insert line item
+			_, err := tx.Exec(insertLineItemSQL, li.OrderId, li.LineNumber, li.ItemId, li.Quantity, li.UnitPrice)
+			if err != nil {
+				log.Printf("service InsertOrder InsertLineItem error: %v", err.Error())
+				continue
+			}
+		}
 		return nil
-	}
-	return errors.New("can not insert order status")
+	})
 }

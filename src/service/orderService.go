@@ -46,28 +46,7 @@ func InsertOrder(o *domain.Order) error {
 		return err
 	}
 	o.OrderId = orderId
-	for _, li := range o.LineItems {
-		err := persistence.UpdateInventoryQuantity(li.ItemId, li.Quantity)
-		if err != nil {
-			log.Printf("service InsertOrder UpdateInventoryQuantity error: %v", err.Error())
-		}
-	}
-	err = persistence.InsertOrder(o)
-	if err != nil {
-		return err
-	}
-	err = persistence.InsertOrderStatus(o)
-	if err != nil {
-		return err
-	}
-	for _, li := range o.LineItems {
-		li.OrderId = o.OrderId
-		err := persistence.InsertLineItem(li)
-		if err != nil {
-			log.Printf("service InsertOrder InsertLineItem error: %v", err.Error())
-		}
-	}
-	return nil
+	return persistence.InsertOrder(o)
 }
 
 // update the sequence and next id

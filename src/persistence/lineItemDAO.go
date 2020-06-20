@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"database/sql"
-	"errors"
 	"gopetstore/src/domain"
 	"gopetstore/src/util"
 	"log"
@@ -61,28 +60,10 @@ func GetLineItemsByOrderId(orderId int) ([]*domain.LineItem, error) {
 		}
 		result = append(result, li)
 	}
+	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return result, err
+	}
 	return result, nil
-}
-
-// insert line item
-func InsertLineItem(li *domain.LineItem) error {
-	d, err := util.GetConnection()
-	defer func() {
-		_ = d.Close()
-	}()
-	if err != nil {
-		return err
-	}
-	r, err := d.Exec(insertLineItemSQL, li.OrderId, li.LineNumber, li.ItemId, li.Quantity, li.UnitPrice)
-	if err != nil {
-		return err
-	}
-	row, err := r.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if row > 0 {
-		return nil
-	}
-	return errors.New("can not insert item")
 }

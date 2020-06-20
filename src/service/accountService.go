@@ -17,36 +17,10 @@ func GetAccountByUserNameAndPassword(userName string, password string) (*domain.
 
 // insert account
 func InsertAccount(account *domain.Account) error {
-	err := persistence.InsertAccount(account)
-	if err != nil {
-		return err
-	}
-	err = persistence.InsertProfile(account)
-	if err != nil {
-		return err
-	}
-	err = persistence.InsertSigOn(account.UserName, account.Password)
-	if err != nil {
-		return err
-	}
-	return nil
+	return persistence.InsertAccount(account)
 }
 
 // update account by userName
 func UpdateAccount(account *domain.Account) error {
-	err := persistence.UpdateAccountByUserName(account, account.UserName)
-	if err != nil {
-		return err
-	}
-	err = persistence.UpdateProfileByUserName(account, account.UserName)
-	if err != nil {
-		return err
-	}
-	if len(account.Password) > 0 {
-		err = persistence.UpdateSignOn(account.UserName, account.Password)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return persistence.UpdateAccountByUserName(account, account.UserName)
 }

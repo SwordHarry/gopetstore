@@ -5,7 +5,6 @@ import (
 	"errors"
 	"gopetstore/src/domain"
 	"gopetstore/src/util"
-	"log"
 )
 
 // all SQL about Account
@@ -98,6 +97,10 @@ func GetAccountByUserName(userName string) (*domain.Account, error) {
 		return a, nil
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not find the account by this user name")
 }
 
@@ -124,69 +127,60 @@ func GetAccountByUserNameAndPassword(userName string, password string) (*domain.
 		return a, nil
 	}
 	defer r.Close()
+	err = r.Err()
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("can not find the account by this user name and password")
 }
 
 // insert account
 func InsertAccount(account *domain.Account) error {
-	return util.InsertOrUpdate(insertAccountSQL,
-		"insert account error", account.Email, account.FirstName, account.LastName,
-		account.Status, account.Address1, account.Address2, account.City, account.State,
-		account.Zip, account.Country, account.Phone, account.UserName)
-}
-
-// insert profile from profile
-func InsertProfile(account *domain.Account) error {
-	return util.InsertOrUpdate(insertProfileSQL, "can not insert profile", account.LanguagePreference,
-		account.FavouriteCategoryId, account.UserName, account.ListOption, account.BannerOption)
-}
-
-// insert user name and password from signOn
-func InsertSigOn(userName string, password string) error {
-	return util.InsertOrUpdate(insertSigOnSQL, "can not insert this user name and password", userName, password)
+	// 使用事务，三个表中有一个表的插入有错，则将回滚报错
+	return util.ExecTransaction(func(tx *sql.Tx) error {
+		_, err := tx.Exec(insertAccountSQL, account.Email, account.FirstName, account.LastName,
+			account.Status, account.Address1, account.Address2, account.City, account.State,
+			account.Zip, account.Country, account.Phone, account.UserName)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		_, err = tx.Exec(insertProfileSQL, account.LanguagePreference,
+			account.FavouriteCategoryId, account.UserName, account.ListOption, account.BannerOption)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		_, err = tx.Exec(insertSigOnSQL, account.UserName, account.Password)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		return nil
+	})
 }
 
 // update account by userName
 func UpdateAccountByUserName(account *domain.Account, userName string) error {
-	// TODO: 更新恒报错，affectedRow 为 0
-	log.Print(account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
-		account.City, account.State, account.Zip, account.Country, account.Phone)
-	log.Printf("userName: %v", userName)
-	d, err := util.GetConnection()
-	defer func() {
-		if d != nil {
-			_ = d.Close()
+	// 使用事务，更新出错则回滚报错
+	return util.ExecTransaction(func(tx *sql.Tx) error {
+		_, err := tx.Exec(updateAccountSQL, account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
+			account.City, account.State, account.Zip, account.Country, account.Phone, userName)
+		if err != nil {
+			tx.Rollback()
+			return err
 		}
-	}()
-	if err != nil {
-		return err
-	}
-	r, err := d.Exec(updateAccountSQL, account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
-		account.City, account.State, account.Zip, account.Country, account.Phone, userName)
-	if err != nil {
-		return err
-	}
-	affectedRow, err := r.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if affectedRow > 0 {
+		_, err = tx.Exec(updateProfileSQL, account.LanguagePreference, account.FavouriteCategoryId,
+			account.ListOption, account.BannerOption, userName)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		_, err = tx.Exec(updateSigOnSQL, account.Password, userName)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 		return nil
-	}
-	return errors.New("none account was updated by this userName")
-	//return util.InsertOrUpdate(updateAccountSQL, "none account was updated by this userName",
-	//	account.Email, account.FirstName, account.LastName, account.Status, account.Address1, account.Address2,
-	//	account.City, account.State, account.Zip, account.Country, account.Phone, userName)
-}
-
-// update profile by userName
-func UpdateProfileByUserName(account *domain.Account, userName string) error {
-	return util.InsertOrUpdate(updateProfileSQL,
-		"can not update profile by this user name", account.LanguagePreference, account.FavouriteCategoryId,
-		account.ListOption, account.BannerOption, userName)
-}
-
-// update userName and password from signOn
-func UpdateSignOn(userName string, password string) error {
-	return util.InsertOrUpdate(updateSigOnSQL, "can not update password by this user name", password, userName)
+	})
 }
