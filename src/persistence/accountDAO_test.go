@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"fmt"
 	"gopetstore/src/domain"
 	"testing"
 )
@@ -55,4 +56,12 @@ func TestUpdateAccountByUserName(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
+}
+
+func TestGetAccountByUserName(t *testing.T) {
+	a, err := GetAccountByUserName("test")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	fmt.Println(a)
 }

@@ -33,12 +33,12 @@ func (c *Cart) ContainItem(itemId string) (*CartItem, bool) {
 }
 
 // 往购物车添加商品
-func (c *Cart) AddItem(item Item, isInStock bool) {
+func (c *Cart) AddItem(item *Item, isInStock bool) {
 	if ci, ok := c.ContainItem(item.ItemId); ok {
 		ci.IncrementQuantity()
 	} else {
 		ci := &CartItem{
-			Item:     &item,
+			Item:     item,
 			Quantity: 1,
 			InStock:  isInStock,
 			Total:    0,

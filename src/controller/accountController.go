@@ -55,7 +55,7 @@ func ViewLoginOrPostLogin(w http.ResponseWriter, r *http.Request) {
 			m := map[string]interface{}{
 				"Message": "登录失败,用户名或密码错误！",
 			}
-			err := util.RenderWithAccountAndCommonTem(w, r, m, signInFormPath)
+			err := util.RenderWithCommon(w, m, signInFormPath)
 			if err != nil {
 				log.Printf("view signInForm error: %v", err.Error())
 			}

@@ -75,6 +75,7 @@ func scanAccountWithSignOnAndBannerData(r *sql.Rows) (*domain.Account, error) {
 }
 
 // get account by userName for register
+// 用于获取用户信息和 注册 前的重名认证
 func GetAccountByUserName(userName string) (*domain.Account, error) {
 	d, err := util.GetConnection()
 	defer func() {
@@ -99,6 +100,10 @@ func GetAccountByUserName(userName string) (*domain.Account, error) {
 	defer r.Close()
 	err = r.Err()
 	if err != nil {
+		// 若找不到，则为注册时的重名认证
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return nil, errors.New("can not find the account by this user name")
