@@ -67,7 +67,7 @@ func ViewLoginOrPostLogin(w http.ResponseWriter, r *http.Request) {
 				log.Printf("get session error: %v", err.Error())
 			}
 			if s != nil {
-				err = s.Save("account", account, w, r)
+				err = s.Save(config.AccountKey, account, w, r)
 				if err != nil {
 					log.Printf("session save account error: %v", err.Error())
 				}
@@ -97,9 +97,9 @@ func SignOut(w http.ResponseWriter, r *http.Request) {
 		log.Printf("get session error: %v", err.Error())
 	}
 	if s != nil {
-		err = s.Del("account", w, r)
-		err = s.Del("cart", w, r)
-		err = s.Del("order", w, r)
+		err = s.Del(config.AccountKey, w, r)
+		err = s.Del(config.CartKey, w, r)
+		err = s.Del(config.OrderKey, w, r)
 		if err != nil {
 			log.Printf("session delete error: %v", err.Error())
 		}
@@ -217,7 +217,7 @@ func ConfirmEdit(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ConfirmEdit GetSession error: %v", err.Error())
 	}
 	if s != nil {
-		err = s.Save("account", newAccount, w, r)
+		err = s.Save(config.AccountKey, newAccount, w, r)
 		if err != nil {
 			log.Printf("ConfirmEdit Save error: %v", err.Error())
 		}

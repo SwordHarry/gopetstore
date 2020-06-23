@@ -140,6 +140,7 @@ func GetInventoryQuantity(itemId string) (int, error) {
 	if err != nil {
 		return -1, err
 	}
+	defer r.Close()
 	if r.Next() {
 		var result int
 		err := r.Scan(&result)
@@ -148,7 +149,6 @@ func GetInventoryQuantity(itemId string) (int, error) {
 		}
 		return result, nil
 	}
-	defer r.Close()
 	err = r.Err()
 	if err != nil {
 		return -1, err

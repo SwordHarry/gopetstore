@@ -107,7 +107,7 @@ func ViewItem(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("session error: %v", err.Error())
 	} else {
-		r, ok := s.Get("product")
+		r, ok := s.Get(config.ProductKey)
 		if ok {
 			p = r.(*domain.Product)
 		}

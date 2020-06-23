@@ -14,3 +14,11 @@ const (
 )
 
 var CommonPath = filepath.Join(Front, Web, Common, "common.html")
+
+// session key
+const (
+	AccountKey = "account"
+	CartKey    = "cart"
+	ProductKey = "product"
+	OrderKey   = "order"
+)

@@ -44,3 +44,9 @@ func RenderWithAccount(w http.ResponseWriter, r *http.Request, m map[string]inte
 func RenderWithAccountAndCommonTem(w http.ResponseWriter, r *http.Request, m map[string]interface{}, fileName string) error {
 	return RenderWithAccount(w, r, m, fileName, config.CommonPath)
 }
+
+// about request
+// 获取 url 中的 参数
+func GetParam(r *http.Request, key string) []string {
+	return r.URL.Query()[key]
+}

@@ -44,7 +44,7 @@ func ViewInitOrder(w http.ResponseWriter, r *http.Request) {
 				log.Printf("ViewInitOrder GetSession error: %v", err.Error())
 			}
 			if s != nil {
-				err = s.Save("order", o, w, r)
+				err = s.Save(config.OrderKey, o, w, r)
 				if err != nil {
 					log.Printf("ViewInitOrder GetSession error: %v", err.Error())
 				}
@@ -75,7 +75,7 @@ func ConfirmOrderStep1(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ConfirmOrderStep1 GetSession error: %v", err.Error())
 	}
 	if s != nil {
-		re, _ := s.Get("order")
+		re, _ := s.Get(config.OrderKey)
 		o := re.(*domain.Order)
 		// post parse form
 		err := r.ParseForm()
@@ -120,7 +120,7 @@ func ConfirmShip(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ConfirmShip GetSession error: %v", err.Error())
 	}
 	if s != nil {
-		re, _ := s.Get("order")
+		re, _ := s.Get(config.OrderKey)
 		o := re.(*domain.Order)
 		err := r.ParseForm()
 		if err != nil {
@@ -152,7 +152,7 @@ func ConfirmOrderStep2(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ConfirmShip GetSession error: %v", err.Error())
 	}
 	if s != nil {
-		re, _ := s.Get("order")
+		re, _ := s.Get(config.OrderKey)
 		o := re.(*domain.Order)
 		err := service.InsertOrder(o)
 		if err != nil {
@@ -160,7 +160,8 @@ func ConfirmOrderStep2(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// 清空购物车
-		err = s.Del("cart", w, r)
+
+		err = s.Del(config.CartKey, w, r)
 		if err != nil {
 			log.Printf("ConfirmOrderStep2 session del cart error: %v", err.Error())
 		}
@@ -181,7 +182,7 @@ func ListOrders(w http.ResponseWriter, r *http.Request) {
 		log.Printf("ListOrders GetSession error: %v", err.Error())
 	}
 	if s != nil {
-		re, ok := s.Get("account")
+		re, ok := s.Get(config.AccountKey)
 		if ok {
 			a, ok := re.(*domain.Account)
 			if ok {

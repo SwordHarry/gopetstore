@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/gorilla/sessions"
+	"gopetstore/src/config"
 	"gopetstore/src/domain"
 	"log"
 	"net/http"
@@ -62,7 +63,7 @@ func GetAccountFromSession(r *http.Request) *domain.Account {
 		return nil
 	}
 	if s != nil {
-		r, ok := s.Get("account")
+		r, ok := s.Get(config.AccountKey)
 		if !ok {
 			// account 不存在，已登出
 			return nil
@@ -88,7 +89,7 @@ func GetCartFromSession(w http.ResponseWriter, r *http.Request, callback func(ca
 	var cart *domain.Cart
 	// 成功生成 session
 	if s != nil {
-		c, ok := s.Get("cart")
+		c, ok := s.Get(config.CartKey)
 		if !ok {
 			// 初始化 购物车
 			c = domain.NewCart()
@@ -99,7 +100,7 @@ func GetCartFromSession(w http.ResponseWriter, r *http.Request, callback func(ca
 			callback(cart)
 		}
 		// 将新的购物车进行存储覆盖
-		err := s.Save("cart", c, w, r)
+		err := s.Save(config.CartKey, c, w, r)
 		if err != nil {
 			log.Printf("GetCartFromSession session error for Save: %v", err.Error())
 		}

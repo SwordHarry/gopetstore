@@ -160,21 +160,23 @@ func InsertOrder(o *domain.Order) error {
 			tx.Rollback()
 			return err
 		}
-
-		// insert order status
-		_, err = tx.Exec(insertOrderStatusSQL, o.OrderId, o.OrderId, o.OrderDate, o.Status)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
+		// 总物品数
+		var totalLineNum int
 		for _, li := range o.LineItems {
 			li.OrderId = o.OrderId
+			totalLineNum += li.LineNumber
 			// insert line item
 			_, err := tx.Exec(insertLineItemSQL, li.OrderId, li.LineNumber, li.ItemId, li.Quantity, li.UnitPrice)
 			if err != nil {
 				log.Printf("service InsertOrder InsertLineItem error: %v", err.Error())
 				continue
 			}
+		}
+		// insert order status
+		_, err = tx.Exec(insertOrderStatusSQL, o.OrderId, totalLineNum, o.OrderDate, o.Status)
+		if err != nil {
+			tx.Rollback()
+			return err
 		}
 		return nil
 	})

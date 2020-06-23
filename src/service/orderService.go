@@ -4,6 +4,7 @@ import (
 	"gopetstore/src/domain"
 	"gopetstore/src/persistence"
 	"log"
+	"sync"
 )
 
 const orderNum = "ordernum"
@@ -30,6 +31,7 @@ func GetOrderByOrderId(orderId int) (*domain.Order, error) {
 			continue
 		}
 		li.Item = item
+		li.CalculateTotal()
 	}
 	return o, nil
 }
@@ -51,6 +53,10 @@ func InsertOrder(o *domain.Order) error {
 
 // update the sequence and next id
 func getNextId(name string) (int, error) {
+	// 在并发场景下，这里需要锁
+	var mutex sync.Mutex
+	mutex.Lock()
+	defer mutex.Unlock()
 	s, err := persistence.GetSequence(name)
 	if err != nil {
 		return -1, err
