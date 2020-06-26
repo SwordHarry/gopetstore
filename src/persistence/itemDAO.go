@@ -25,7 +25,7 @@ const updateInventoryByItemIdSQl = `UPDATE INVENTORY SET QTY = QTY - ? WHERE ITE
 // scan item, hasQuantity is for the num of param is not equal
 func scanItem(r *sql.Rows, hasQuantity bool) (*domain.Item, error) {
 	var itemId, productId, status string
-	var listPrice, unitCost float32
+	var listPrice, unitCost float64
 	var supplierId, quantity int
 	var attributeList [5]string
 	var pName, pCategoryId, pDescription string

@@ -16,7 +16,7 @@ const (
 func scanLineItem(r *sql.Rows) (*domain.LineItem, error) {
 	var orderId, lineNumber, quantity int
 	var itemId string
-	var unitPrice float32
+	var unitPrice float64
 	err := r.Scan(&orderId, &lineNumber, &itemId, &quantity, &unitPrice)
 	if err != nil {
 		return nil, err

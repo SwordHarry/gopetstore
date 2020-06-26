@@ -3,8 +3,8 @@ package domain
 type Item struct {
 	ItemId        string
 	ProductId     string
-	ListPrice     float32
-	UnitCost      float32
+	ListPrice     float64
+	UnitCost      float64
 	SupplierId    int
 	Status        string
 	AttributeList [5]string

@@ -29,7 +29,7 @@ func scanOrder(r *sql.Rows) (*domain.Order, error) {
 	var shipAddr1, shipAddr2, shipCity, shipCountry, shipState, shipFirstName, shipLastName, shipZip string
 	var cardType, courier, creditCard string
 	var expiryDate, locale, userName, status string
-	var totalPrice float32
+	var totalPrice float64
 	var orderDate time.Time
 	var orderId int
 	err := r.Scan(&billAddr1, &billAddr2, &billCity, &billCountry, &billState, &billToFirstName, &billToLastName, &billZip,

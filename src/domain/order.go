@@ -31,7 +31,7 @@ type Order struct {
 	BillToLastName  string
 	// other
 	Courier    string
-	TotalPrice float32
+	TotalPrice float64
 	CreditCard string
 	ExpiryDate string
 	CardType   string
